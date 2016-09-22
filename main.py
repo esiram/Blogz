@@ -21,7 +21,9 @@ class BlogHandler(webapp2.RequestHandler):
         """
 
         # TODO - filter the query so that only posts by the given user
-        return None
+        query = Post.all().filter('author', user).order('-created')
+        return query.fetch(limit=limit, offset=offset)
+        #return None   #is the code provided.-ES 9/21/16
 
     def get_user_by_name(self, username):
         """ Get a user object from the db, based on their username """
@@ -112,7 +114,7 @@ class BlogIndexHandler(BlogHandler):
                     page_size=self.page_size,
                     prev_page=prev_page,
                     next_page=next_page,
-                    username=username)
+                    username=username)  # should I add author=username  ??? -Es 9/22/16
         self.response.out.write(response)
 
 class NewPostHandler(BlogHandler):
@@ -137,7 +139,7 @@ class NewPostHandler(BlogHandler):
             post = Post(
                 title=title,
                 body=body,
-                author=self.user)
+                author=self.user)  #original code says: author=self.user
             post.put()
 
             # get the id of the new post, so we can render the post's page (via the permalink)
@@ -258,7 +260,7 @@ class SignupHandler(BlogHandler):
 
 class LoginHandler(BlogHandler):
 
-    # TODO - The login code here is mostly set up for you, but there isn't a template to log in
+    # TODO - The login code here is mostly set up for you, but there isn't a template to log in  #DONE 9/12/16-es
 
     def render_login_form(self, error=""):
         """ Render the login form with or without an error, based on parameters """
